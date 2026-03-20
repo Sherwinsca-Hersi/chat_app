@@ -1,0 +1,56 @@
+name: chat_app
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  http: ^1.6.0
+  provider: ^6.1.5+1
+
+  intl: ^0.20.2                       #For Showing Dates and times
+  device_info_plus: ^11.1.0           # Device Info (Login History)
+  shared_preferences: ^2.5.2          # Shared Preferences
+  page_transition: ^2.1.0             # Page Transition
+
+  record: ^6.2.0                      #Audio Recorder package
+  permission_handler: ^12.0.1         #Permisison Handler
+  path_provider: ^2.1.5               #Path Provider for files/Images
+  audioplayers: ^6.6.0                #Audio Player package
+  dio: ^5.9.2                         #download option
+
+
+  image_picker: ^1.2.1                #Image Picker
+
+  file_picker: ^10.3.10               #File Picker
+
+  url_launcher: ^6.3.2                # To connect to dialer App
+
+  rounded_loading_button_plus: ^3.0.1     #Rounded Loading Button
+
+  shimmer: ^3.0.0                         #Shimmer Effect
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+  assets:
+    - assets/images/
+    - assets/audio/
+
+  uses-material-design: true
+
+

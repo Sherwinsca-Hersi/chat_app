@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "370103194046",
+    "project_id": "chatapp-sherwin",
+    "storage_bucket": "chatapp-sherwin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370103194046:android:ab12f0085647552df7a9ef",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqi11Gog9WFTP6N-_F6yul495uE4iMqGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
