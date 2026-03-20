@@ -43,6 +43,13 @@ class ChatProvider with ChangeNotifier{
   void initializeUsers(){
     filteredUsers = List.from(_users);
     log("Filtered Users: $filteredUsers");
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
+  void clearChat() {
+    messages.clear();
     notifyListeners();
   }
 
@@ -253,6 +260,9 @@ class ChatProvider with ChangeNotifier{
         _messages = response.data;
 
         log("Messages Loaded: ${jsonEncode(_messages.map((e)=>e.toJson()).toList())}");
+
+        _isLoading = false;
+        notifyListeners();
 
       } else {
         log("Message Provider: Something went wrong");

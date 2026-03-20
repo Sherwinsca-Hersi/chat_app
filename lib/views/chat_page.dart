@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chat_app/res/colors.dart';
+import 'package:chat_app/res/widget/chat_shimmer.dart';
 import 'package:chat_app/utils/sizedBox.dart';
 import 'package:chat_app/view_model/chat_provider.dart';
 import 'package:chat_app/views/user_screen.dart';
@@ -29,7 +30,8 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    chatProvider = Provider.of<ChatProvider>(context, listen: false); // store
+    chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.clearChat();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await chatProvider.MessageData(
@@ -39,6 +41,7 @@ class _ChatPageState extends State<ChatPage> {
     });
 
     chatProvider.initPlayerListeners();
+
   }
 
   @override
@@ -53,10 +56,11 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context,chatProvider,child){
         return WillPopScope(
           onWillPop: () async {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => UserScreen()),
-            );
+            // Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => UserScreen()),
+            // );
+            Navigator.pop(context);
             return false;
           },
           child: Scaffold(
@@ -137,12 +141,13 @@ class _ChatPageState extends State<ChatPage> {
                   /// Messages
                   Expanded(
                     child: chatProvider.isLoading ?
-                    Center(
-                      child: CircularProgressIndicator(
-                        color: AppColor.primaryColor,
-                      ),
-                    ):
-                    SafeArea(
+                    // Center(
+                    //   child: CircularProgressIndicator(
+                    //     color: AppColor.primaryColor,
+                    //   ),
+                    // )
+                    ChatMessageShimmer()
+                        : SafeArea(
                       child: CustomContainer(
                         padding: const EdgeInsets.all(10),
 

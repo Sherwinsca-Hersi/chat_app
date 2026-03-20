@@ -168,8 +168,20 @@ class _UserScreenState extends State<UserScreen> {
                     final users = chatProvider.filteredUsers![index];
                     return InkWell(
                       onTap: (){
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatPage(otherUserId : users.id, otherUserName: users.name
-                        )));
+                        // Navigator.pushReplacement(context,
+                        //     MaterialPageRoute(builder: (context)=>
+                        //         ChatPage(otherUserId : users.id, otherUserName: users.name
+                        // )));
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                              otherUserId: users.id,
+                              otherUserName: users.name,
+                            ),
+                          ),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(15, 10, 15, 5),
