@@ -15,23 +15,29 @@ class VoiceMessageBubble extends StatefulWidget {
 }
 
 class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
-
   @override
   void initState() {
     super.initState();
 
-    /// 🔥 AUTO DOWNLOAD WHEN BUBBLE APPEARS
-    if (widget.audioPath.isNotEmpty &&
-        !widget.audioPath.startsWith("/")) {
+    if (widget.audioPath.isNotEmpty) {
+
+      String fullPath = widget.audioPath.startsWith("/")
+          ? widget.audioPath
+          : "${ApiUrls.audioUrl}${widget.audioPath}";
 
       Future.microtask(() {
-        context
-            .read<ChatProvider>()
-            .downloadAudio("${ApiUrls.audioUrl}${widget.audioPath}");
+        final provider = context.read<ChatProvider>();
+
+        /// download (existing)
+        if (!widget.audioPath.startsWith("/")) {
+          provider.downloadAudio(fullPath);
+        }
+
+        /// 🔥 NEW → duration load
+        provider.loadAudioDuration(fullPath);
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final chatProvider = context.watch<ChatProvider>();
@@ -80,7 +86,6 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
             color: Colors.grey[350],
           ),
           onPressed: () {
-
             if (widget.audioPath.isEmpty) {
               debugPrint("Audio path empty");
               return;
@@ -131,10 +136,8 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
               twoDigits(d.inSeconds.remainder(60));
               return "$minutes:$seconds";
             }
-
             return Row(
               children: [
-
                 /// 🔥 Seekable waveform
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
@@ -177,9 +180,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 6),
-
                 /// ⏱ Duration
                 Text(
                   formatDuration(displayDuration),

@@ -29,6 +29,8 @@ class Users {
   String name;
   String mobile;
   String email;
+  String lastMessage;
+  String lastChatTime;
   int unreadCount;
 
   Users({
@@ -36,6 +38,8 @@ class Users {
     required this.name,
     required this.mobile,
     required this.email,
+    required this.lastMessage,
+    required this.lastChatTime,
     required this.unreadCount,
   });
 
@@ -44,6 +48,8 @@ class Users {
     name: json["name"] ?? "",
     mobile: json["mobile"] ?? "",
     email: json["email"] ?? "",
+    lastChatTime: json["last_chat_time"] ?? "",
+    lastMessage: json["last_message"] ?? "",
 
     /// 🔥 SAFE unread_count parsing
     unreadCount:

@@ -22,14 +22,11 @@ class UserScreen extends StatefulWidget {
   State<UserScreen> createState() => _UserScreenState();
 }
 
-
-
 class _UserScreenState extends State<UserScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-
       // checkFirstSeen(context);
 
       // final loginProvider =
@@ -48,6 +45,18 @@ class _UserScreenState extends State<UserScreen> {
       chatProvider.userSearchController.clear();
       chatProvider.initializeUsers();
 
+      ScreenUtils.init(context);
+
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Force rebuild when coming back
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
     });
   }
 
@@ -60,10 +69,11 @@ class _UserScreenState extends State<UserScreen> {
             return false;
           },
           child: Scaffold(
+            backgroundColor: AppColor.containerColor,
             appBar: AppBar(
               backgroundColor: AppColor.containerColor,
-              title: MyText(title:"Users",fontWeight: FontWeight.bold,),
-              centerTitle: true,
+              title: MyText(title:"Welcome ${localData.currentUserName} !",fontWeight: FontWeight.bold,fontSize: 15),
+              // centerTitle: true,
               elevation: 5,
               actions: [
                 IconButton(onPressed: (){
@@ -111,21 +121,23 @@ class _UserScreenState extends State<UserScreen> {
             ),
             body: Column(
               children: [
-                Container(
-                  width: 380,
-                  child: CustomTextField(
-                      controller: chatProvider.userSearchController,
-                      borderRadius: BorderRadius.circular(10),
-                    hintText: "Search By Name,Mobile,Email etc..",
-                    prefixIcon: Icon(Icons.search,color: Colors.grey[400],),
-                    suffixIcon: IconButton(onPressed: (){
-                      chatProvider.userSearchController.clear();
-                      chatProvider.initializeUsers();
-                    }, icon: Icon(Icons.clear,color: Colors.grey[400],size: 15,)),
-                    onChanged: (value){
-                        final searchValue = value.trim();
-                        chatProvider.searchUsers(searchValue);
-                    },
+                Center(
+                  child: SizedBox(
+                    width: ScreenUtils.screenWidth * 0.90,
+                    child: CustomTextField(
+                        controller: chatProvider.userSearchController,
+                        borderRadius: BorderRadius.circular(50),
+                      hintText: "Search By Name,Mobile,Email etc..",
+                      prefixIcon: Icon(Icons.search,color: Colors.grey[400],size: 20,),
+                      suffixIcon: IconButton(onPressed: (){
+                        chatProvider.userSearchController.clear();
+                        chatProvider.initializeUsers();
+                      }, icon: Icon(Icons.clear,color: Colors.grey[400],size: 17,)),
+                      onChanged: (value){
+                          final searchValue = value.trim();
+                          chatProvider.searchUsers(searchValue);
+                      },
+                    ),
                   ),
                 ),
                 10.height,
@@ -136,7 +148,6 @@ class _UserScreenState extends State<UserScreen> {
                 //     color: AppColor.primaryColor,
                 //   ),
                 // )
-
                   ListView.separated(
                       separatorBuilder: (context, index){
                         return 20.height;
@@ -144,6 +155,8 @@ class _UserScreenState extends State<UserScreen> {
                     itemCount: 7,
                       itemBuilder: (context, index){
                          return Shimmer.fromColors(
+                             baseColor: Colors.grey[300]!,
+                           highlightColor: Colors.grey[100]!,
                              child: Padding(
                                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                                child: CustomContainer(
@@ -153,13 +166,16 @@ class _UserScreenState extends State<UserScreen> {
                                  backgroundColor: Colors.white,
                                ),
                              ),
-                           baseColor: Colors.grey[300]!,
-                           highlightColor: Colors.grey[100]!,
                          );
                       })
                       : ListView.separated(
                   separatorBuilder: (context, index){
-                    return 0.height;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Divider(
+                          color: Colors.grey.shade100,
+                      ),
+                    );
                   },
                   itemCount: chatProvider.filteredUsers!.length,
                   shrinkWrap: true,
@@ -182,70 +198,69 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ),
                         );
+
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 10, 15, 5),
-                        child: CustomContainer(
-                          width: ScreenUtils.screenWidth * 0.80,
-                          height: 90,
-                          backgroundColor: AppColor.containerColor,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.4),
-                              blurRadius: 8,
-                              spreadRadius: 1,
-                              offset: Offset(0, 3),
-                            )
-                          ],
-                          widget: Center(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                radius: 20,
-                                backgroundColor: AppColor.primaryColor,
-                                child: MyText(
-                                  title: chatProvider.getInitials(users.name),
-                                  color: AppColor.whiteTextColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      child: CustomContainer(
+                        width: ScreenUtils.screenWidth * 0.80,
+                        // height: 90,
+                        backgroundColor: AppColor.containerColor,
+                        // backgroundColor: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.grey.withOpacity(0.4),
+                        //     blurRadius: 8,
+                        //     spreadRadius: 1,
+                        //     offset: Offset(0, 3),
+                        //   )
+                        // ],
+                        child: Center(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: AppColor.primaryColor,
+                              child: MyText(
+                                title: chatProvider.getInitials(users.name),
+                                color: AppColor.whiteTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
                               ),
-                              title: MyText(title: users.name[0].toUpperCase() + users.name.substring(1),fontWeight: FontWeight.bold,),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  MyText(title: users.mobile),
-                                  // MyText(title: "aaa@gmail.com"),
-                                ],
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: (){
-                                      chatProvider.makePhoneCall(users.mobile);
-                                    },
-                                    icon: Icon(Icons.call,color: AppColor.primaryColor,)),
-                                  3.width,
-                                  IconButton(onPressed: (){
-                                      chatProvider.openGmail(users.email);
-                                  }, icon: Icon(Icons.mail,color: AppColor.primaryColor,),),
-                                  3.width,
-                                  if (users.unreadCount > 0)
-                                    CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor: AppColor.primaryColor,
-                                    child: Text(
-                                      users.unreadCount.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
+                            ),
+                            title: MyText(title: users.name[0].toUpperCase() + users.name.substring(1),fontWeight: FontWeight.bold,),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                MyText(title: users.mobile),
+                                // MyText(title: "aaa@gmail.com"),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: (){
+                                    chatProvider.makePhoneCall(users.mobile);
+                                  },
+                                  icon: Icon(Icons.call,color: AppColor.primaryColor,)),
+                                3.width,
+                                IconButton(onPressed: (){
+                                    chatProvider.openGmail(users.email);
+                                }, icon: Icon(Icons.mail,color: AppColor.primaryColor,),),
+                                3.width,
+                                if (users.unreadCount > 0)
+                                  CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: AppColor.primaryColor,
+                                  child: Text(
+                                    users.unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

@@ -6,7 +6,7 @@ class CustomContainer extends StatelessWidget {
     this.backgroundColor,
     this.borderRadius,
     this.gradientColors,
-    this.widget,
+    this.child,
     this.width,
     this.height,
     this.elevation,
@@ -20,7 +20,7 @@ class CustomContainer extends StatelessWidget {
  final Color? backgroundColor;
  final BorderRadius? borderRadius;
  final List<Color>? gradientColors;
- final Widget? widget;
+ final Widget? child;
  final double? width;
  final double? height;
  final double? elevation;
@@ -49,7 +49,7 @@ class CustomContainer extends StatelessWidget {
         boxShadow: boxShadow,
       ),
       alignment: alignment,
-      child:  widget,
+      child:  child,
     );
   }
 }

@@ -9,4 +9,8 @@ class ApiUrls {
 
   static const String imageUrl = "$script?data=getImageFile&file=";
 
+  static const String fileUrl = "$script?data=getDocumentFile&file=";
+
+  static const String videoUrl = "$script?data=getVideoFile&file=";
+
 }

@@ -40,12 +40,15 @@ class MessageRepository {
   }
 
   ///Message Fetch Data
-  Future<MessageResponse> getMessages({required dynamic otherUser}) async {
+  Future<MessageResponse> getMessages({
+    required dynamic otherUser,
+  }) async {
     try {
       final body = {
         "data": "message_fetch",
         "sender_id" : localData.currentUserID,
         "receiver_id" : otherUser,
+        // "last_id" : lastId,
       };
 
       log("Response Sended:$body");
@@ -70,19 +73,19 @@ class MessageRepository {
   }
 
   ///Message Send Data
-  Future<SendMessageResponse> sendMessages(
-      {
-        required dynamic otherUser,
-        required dynamic message,
-        required int senderId,
-        required String type,
-        required String? audioPath,
-        required String? imagePath
-      }) async {
+  Future<SendMessageResponse> sendMessages({
+    required dynamic otherUser,
+    required dynamic message,
+    required int senderId,
+    required String type,
+    required String? audioPath,
+    required String? imagePath,
+    String? filePath,
+    String? fileName,
+    String? videoPath
+  }) async {
     try {
-
       var uri = Uri.parse(ApiUrls.script);
-
       var request = http.MultipartRequest("POST", uri);
 
       request.fields["data"] = "send_message";
@@ -91,33 +94,65 @@ class MessageRepository {
       request.fields["message"] = message.toString();
       request.fields["type"] = type;
 
-      if(type == "voice" && audioPath != null){
+      print("TYPE: $type");
+      print("VIDEO PATH: $videoPath");
+      print("IMAGE PATH: $imagePath");
+      print("AUDIO PATH: $audioPath");
+      print("FILE PATH: $filePath");
+
+      /// VOICE
+      if (audioPath != null && audioPath.isNotEmpty) {
         request.files.add(
-          await  http.MultipartFile.fromPath("audio", audioPath),
+          await http.MultipartFile.fromPath("audio", audioPath),
         );
       }
 
-      if(type == "image" && audioPath != null){
+      /// IMAGE
+      if (imagePath != null && imagePath.isNotEmpty) {
         request.files.add(
-          await  http.MultipartFile.fromPath("image", imagePath!),
+          await http.MultipartFile.fromPath("image", imagePath),
         );
       }
 
-      log("Send Message Request Data:${request.fields}");
+      /// 📎 FILE
+      if (filePath != null && filePath.isNotEmpty) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            "file",
+            filePath,
+            filename: fileName,
+          ),
+        );
+      }
+
+      /// 🎥 VIDEO (FIXED)
+      if (videoPath != null && videoPath.isNotEmpty) {
+        print("Sending video: $videoPath");
+
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            "video",
+            videoPath,
+            filename: videoPath.split('/').last,
+          ),
+        );
+      }
+
+      print("FILES COUNT: ${request.files.length}");
 
       var response = await request.send();
-
       var responseData = await response.stream.bytesToString();
+
+      print("Response: $responseData");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(responseData);
         return SendMessageResponse.fromJson(data);
-
       } else {
-        log("Messages Fetch Error");
-        throw Exception();
+        throw Exception("Send failed");
       }
     } catch (e) {
+      print("ERROR: $e");
       throw Exception(e);
     }
   }

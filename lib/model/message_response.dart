@@ -36,6 +36,9 @@ class Message {
   String type;
   String audioPath;
   String imagePath;
+  String videoPath;
+  String fileName;
+  String filePath;
   DateTime createdAt;
 
   bool isFailed = false;
@@ -51,8 +54,12 @@ class Message {
     required this.type,
     required this.audioPath,
     required this.imagePath,
+    required this.videoPath,
+    required this.fileName,
+    required this.filePath,
     required this.createdAt,
     this.isFailed = false,
+
   });
 
   factory Message.fromJson(Map<String, dynamic> json) => Message(
@@ -64,6 +71,9 @@ class Message {
     message: json["message"]?.toString() ?? "",
     audioPath: json["audio_path"]?.toString() ?? "",
     imagePath: json["image_path"]?.toString() ?? "",
+    videoPath: json["video_path"]?.toString() ?? "",
+    fileName: json["file_name"]?.toString() ?? "",
+    filePath: json["file_path"]?.toString() ?? "",
     senderName: json["sender_name"]?.toString() ?? "",
     type: json["type"]?.toString() ?? "",
     createdAt: DateTime.parse(json["created_at"]),
