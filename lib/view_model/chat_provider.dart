@@ -877,6 +877,30 @@ class ChatProvider with ChangeNotifier{
 
   // Future<void> loadAudioDuration(String path) async {
   //   try {
+  //     log("Loading duration for: $path");
+  //
+  //     String localPath = path;
+  //
+  //     /// If network → download first
+  //     if (path.startsWith("http")) {
+  //       localPath = await downloadAudio(path);
+  //     }
+  //
+  //     /// 🔥 IMPORTANT → set source மட்டும் போதும் (play வேண்டாம்)
+  //     await _durationPlayer.setSource(DeviceFileSource(localPath));
+  //
+  //     duration = await _durationPlayer.getDuration() ?? Duration.zero;
+  //
+  //     log("Duration loaded: $duration");
+  //
+  //     notifyListeners();
+  //   } catch (e) {
+  //     log("Duration load error: $e");
+  //   }
+  // }
+
+  // Future<void> loadAudioDuration(String path) async {
+  //   try {
   //     // ✅ Already loaded — skip
   //     if (audioDurations.containsKey(path)) return;
   //
