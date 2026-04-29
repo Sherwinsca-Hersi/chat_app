@@ -33,11 +33,12 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
           provider.downloadAudio(fullPath);
         }
 
-        /// 🔥 NEW → duration load
+        /// duration load
         provider.loadAudioDuration(fullPath);
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final chatProvider = context.watch<ChatProvider>();
@@ -110,22 +111,28 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
 
             final position = snapshot.data ?? Duration.zero;
 
+            // ✅ CHANGE 1: Use per-audio duration from map instead of global duration
+            final Duration totalDuration =
+                chatProvider.audioDurations[playPath] ?? Duration.zero;
+
             double progress = 0.0;
 
+            // ✅ CHANGE 2: Use totalDuration (per-audio) instead of chatProvider.duration
             if (chatProvider.currentAudio == playPath &&
-                chatProvider.duration.inMilliseconds > 0 &&
+                totalDuration.inMilliseconds > 0 &&
                 position.inMilliseconds > 0) {
               progress = (position.inMilliseconds /
-                  chatProvider.duration.inMilliseconds)
+                  totalDuration.inMilliseconds)
                   .clamp(0.0, 1.0);
             }
 
             int activeCount = (progress * waveCount).ceil();
 
+            // ✅ CHANGE 3: Show position when playing THIS audio, else show its own total duration
             Duration displayDuration =
-            isPlaying
+            (chatProvider.currentAudio == playPath && isPlaying)
                 ? position
-                : chatProvider.duration;
+                : totalDuration;
 
             String formatDuration(Duration d) {
               String twoDigits(int n) =>
@@ -136,6 +143,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
               twoDigits(d.inSeconds.remainder(60));
               return "$minutes:$seconds";
             }
+
             return Row(
               children: [
                 /// 🔥 Seekable waveform
@@ -201,16 +209,19 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
 void _seekAudio(double dx, BuildContext context, String playPath) {
   final chatProvider = context.read<ChatProvider>();
 
-  if (chatProvider.duration.inMilliseconds == 0) return;
+  // ✅ Also use per-audio duration for seek calculation
+  final Duration totalDuration =
+      chatProvider.audioDurations[playPath] ?? Duration.zero;
+
+  if (totalDuration.inMilliseconds == 0) return;
 
   const double totalWidth = 3 * 20 + 1.5 * 2 * 20;
-  // bar width + padding * count (approx)
 
   double percent = (dx / totalWidth).clamp(0.0, 1.0);
 
   Duration newPosition = Duration(
     milliseconds:
-    (chatProvider.duration.inMilliseconds * percent).toInt(),
+    (totalDuration.inMilliseconds * percent).toInt(),
   );
 
   chatProvider.seekAudio(newPosition);

@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: CustomContainer(
           width: 400,
           height: 800,
-          image: DecorationImage(image: AssetImage("assets/images/splash_vector.png"
+          image: DecorationImage(image: AssetImage("assets/images/splash_screen_img.png"
               "",),fit: BoxFit.contain)
         ),
       ),

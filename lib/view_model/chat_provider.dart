@@ -52,10 +52,20 @@ class ChatProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void clearChat(String userId) {
-    currentChatUserId = userId;
-    _messages = [];
+  // void clearChat(String userId) {
+  //   currentChatUserId = userId;
+  //   _messages = [];
+  //   _isLoading = true;
+  //   hasLoadedOnce = false;
+  //   stopPolling();
+  //   notifyListeners();
+  // }
+
+  void resetChat() {
+    messages.clear();
+    hasLoadedOnce = false;
     _isLoading = true;
+    stopPolling();
     notifyListeners();
   }
 
@@ -690,6 +700,7 @@ class ChatProvider with ChangeNotifier{
     }
   }
 
+  final Map<String, Duration> audioDurations = {};
 
   /// Audio Recorder
   final AudioRecorder _recorder = AudioRecorder();
@@ -864,8 +875,41 @@ class ChatProvider with ChangeNotifier{
     );
   }
 
+  // Future<void> loadAudioDuration(String path) async {
+  //   try {
+  //     // ✅ Already loaded — skip
+  //     if (audioDurations.containsKey(path)) return;
+  //
+  //     log("Loading duration for: $path");
+  //
+  //     String localPath = path;
+  //
+  //     /// If network → download first
+  //     if (path.startsWith("http")) {
+  //       localPath = await downloadAudio(path);
+  //     }
+  //
+  //     /// set source மட்டும்
+  //     await _durationPlayer.setSource(DeviceFileSource(localPath));
+  //
+  //     final dur = await _durationPlayer.getDuration() ?? Duration.zero;
+  //
+  //     log("Duration loaded: $dur for $path");
+  //
+  //     // ✅ CHANGE: global duration-ல save பண்ணாம, map-ல save பண்ணு
+  //     audioDurations[path] = dur;
+  //
+  //     notifyListeners();
+  //   } catch (e) {
+  //     log("Duration load error: $e");
+  //   }
+  // }
+
   Future<void> loadAudioDuration(String path) async {
     try {
+      // ✅ Already loaded — skip
+      if (audioDurations.containsKey(path)) return;
+
       log("Loading duration for: $path");
 
       String localPath = path;
@@ -875,12 +919,18 @@ class ChatProvider with ChangeNotifier{
         localPath = await downloadAudio(path);
       }
 
-      /// 🔥 IMPORTANT → set source மட்டும் போதும் (play வேண்டாம்)
-      await _durationPlayer.setSource(DeviceFileSource(localPath));
 
-      duration = await _durationPlayer.getDuration() ?? Duration.zero;
+      final tempPlayer = AudioPlayer();
 
-      log("Duration loaded: $duration");
+      await tempPlayer.setSource(DeviceFileSource(localPath));
+
+      final dur = await tempPlayer.getDuration() ?? Duration.zero;
+
+      log("Duration loaded: $dur for $path");
+
+      audioDurations[path] = dur;
+
+      await tempPlayer.dispose();
 
       notifyListeners();
     } catch (e) {
